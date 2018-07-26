@@ -6,7 +6,7 @@
     <version>2.0.0</version>
     <name>Maven Gettext Plugin</name>
     <description>Generate messages templates and deploy messages bundles</description>
-    <url>https://github.com/AlexSchuetz/gettext-maven-plugin</url>
+    <url>https://github.com/${gitUrl}</url>
     <properties>
         <gitUrl>AlexSchuetz/gettext-maven-plugin</gitUrl>
         <gpg.keyname>6E08FEDB</gpg.keyname>
