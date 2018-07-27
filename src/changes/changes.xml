@@ -1,9 +1,24 @@
 <document>
   <properties>
     <title>Maven Gettext Plugin Changelog</title>
-    <author email="steffenp@gmx.de">Steffen Pingel</author>
+    <author>Alexander Schütz</author>
   </properties>
   <body>
+    <release version="2.0.0" date="2018-07-26" description="Major release">
+      <action dev="fenvariel" type="update">
+        Removed gettext invocation from goal merge to allow merging files, that
+                were not extracted by this plugin.
+      </action>
+    </release>
+    
+    <release version="1.0.1" date="2017-08-08" description="First release (de.fenvariel)">
+      <action dev="fenvariel" type="">
+        Added configuration options for merge to control entry-order. This way 
+                it is possible to check in the po-files too scm and have them
+                generated and merged by the CI.
+      </action>
+    </release>
+    
     <release version="1.1" date="2007-08-01" description="Subsequent release">
       <action dev="squig" type="fix">
         Write list of sources to file instead of passing them on the
