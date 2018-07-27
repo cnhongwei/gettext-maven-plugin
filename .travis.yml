@@ -14,3 +14,8 @@ deploy:
     repo: example/project
     tags: true
     jdk: oraclejdk8
+
+# blocklist
+branches:
+  except:
+  - gh-pages
