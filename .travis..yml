@@ -1,0 +1,16 @@
+udo: false
+language: java
+jdk:
+  - oraclejdk8
+script: mvn --settings .travis/settings.xml clean  verify
+cache:
+  directories:
+    - $HOME/.m2
+deploy:
+   provider: script
+   script: .travis/release.sh
+   skip_cleanup: true
+   on:
+    repo: example/project
+    tags: true
+    jdk: oraclejdk8

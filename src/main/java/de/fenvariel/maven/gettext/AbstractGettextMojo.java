@@ -18,27 +18,27 @@ package de.fenvariel.maven.gettext;
 
 import java.io.File;
 
+import static de.fenvariel.maven.gettext.Location.FULL;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.cli.Commandline;
-import static de.fenvariel.maven.gettext.Location.FULL;
 
 public abstract class AbstractGettextMojo extends AbstractMojo {
 
-    @Parameter(defaultValue = "${project}", required = true, readonly = true)
+    @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
     /**
      * The output directory for generated class or properties files.
      */
-    @Parameter(defaultValue = "${project.build.outputDirectory}", required = true)
+    @Parameter(property = "project.build.outputDirectory", required = true)
     protected File outputDirectory;
 
     /**
      * Source directory. This directory is searched recursively for .java files.
      */
-    @Parameter(defaultValue = "${project.build.sourceDirectory}", required = true)
+    @Parameter(property = "project.build.sourceDirectory", required = true)
     protected File sourceDirectory;
 
     /**

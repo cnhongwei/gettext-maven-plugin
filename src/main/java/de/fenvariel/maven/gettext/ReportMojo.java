@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -58,6 +60,7 @@ public class ReportMojo extends AbstractMavenReport {
     @Parameter(defaultValue = "msgfmt", required = true)
     protected String msgfmtCmd;
 
+    @Override
     protected void executeReport(Locale locale) throws MavenReportException {
         Sink sink = getSink();
 
@@ -127,6 +130,7 @@ public class ReportMojo extends AbstractMavenReport {
         sink.table_();
     }
 
+    @Override
     public String getDescription(Locale locale) {
         return "Statistics about po files.";
     }
@@ -135,6 +139,7 @@ public class ReportMojo extends AbstractMavenReport {
         return "Gettext";
     }
 
+    @Override
     public String getOutputName() {
         return "gettext-report";
     }
@@ -184,18 +189,20 @@ public class ReportMojo extends AbstractMavenReport {
 
     public static Locale getLocale(File file) {
         String basename = file.getName().substring(0, file.getName().lastIndexOf('.'));
-        if (basename.contains("_")) {
-            StringTokenizer t = new StringTokenizer(basename, "_");
-            return new Locale(t.nextToken(), t.nextToken());
-        } else {
-            return new Locale(basename);
-        }
-
+        return Locale.forLanguageTag(basename);
     }
 
-    private class Stats {
+    private static Pattern patternTranslated = Pattern.compile("(\\d+) translated message[s]?");
+    private static Pattern patternFuzzy =  Pattern.compile("(\\d+) fuzzy translation[s]?");
+    private static Pattern patternUntranslated = Pattern.compile("(\\d+) untranslated message[s]?");
+        
+    public class Stats {
 
-        private List<StatsEntry> items = new ArrayList<StatsEntry>();
+        private final List<StatsEntry> items;
+
+        private Stats() {
+            this.items = new ArrayList<StatsEntry>();
+        }
 
         /**
          * <code>
@@ -206,26 +213,28 @@ public class ReportMojo extends AbstractMavenReport {
          *
          * @param line output of msgfmt command
          */
-        public void parseOutput(File file, String line) {
+        private void parseOutput(File file, String line) {
             StatsEntry entry = new StatsEntry(file);
             items.add(entry);
 
-            StringTokenizer t = new StringTokenizer(line, ",");
-            while (t.hasMoreTokens()) {
-                String token = t.nextToken().trim();
-
-                // remove trailing "."
-                if (token.endsWith(".")) {
-                    token = token.substring(0, token.length() - 1);
-                }
-
-                if (token.endsWith("untranslated messages")) {
-                    entry.setUntranslated(extractNumber(token));
-                } else if (token.endsWith("translated messages")) {
-                    entry.setTranslated(extractNumber(token));
-                } else if (token.endsWith("fuzzy translations")) {
-                    entry.setFuzzy(extractNumber(token));
-                }
+            
+            Matcher matcher = patternTranslated.matcher(line.trim());
+            if (!matcher.find()) {
+                getLog().error("Could not parse statistic output: " + line);
+            } else {
+                entry.setTranslated(extractNumber(matcher.group(1)));
+            }
+            matcher = patternFuzzy.matcher(line.trim());
+            if (!matcher.find()) {
+                getLog().error("Could not parse statistic output: " + line);
+            } else {
+                entry.setFuzzy(extractNumber(matcher.group(1)));
+            }
+            matcher = patternUntranslated.matcher(line.trim());
+            if (!matcher.find()) {
+                getLog().error("Could not parse statistic output: " + line);
+            } else {
+                entry.setUntranslated(extractNumber(matcher.group(1)));
             }
         }
 
@@ -235,9 +244,10 @@ public class ReportMojo extends AbstractMavenReport {
                 try {
                     return Integer.parseInt(t.nextToken());
                 } catch (NumberFormatException e) {
+                    getLog().error("Could not parse token \"" + token + "\":" + e.getMessage());
                 }
             }
-            getLog().warn("Could not parse token: " + token);
+            getLog().warn("Could not extract number from: " + token);
             return 0;
         }
 
@@ -247,10 +257,10 @@ public class ReportMojo extends AbstractMavenReport {
 
     }
 
-    private class StatsEntry implements Comparable<StatsEntry> {
+    public class StatsEntry implements Comparable<StatsEntry> {
 
-        private File file;
-        private Locale locale;
+        private final File file;
+        private final Locale locale;
         private int untranslated;
         private int fuzzy;
         private int translated;
@@ -274,7 +284,7 @@ public class ReportMojo extends AbstractMavenReport {
         }
 
         public int getTotal() {
-            return getUntranslated() + getTotal() + getTranslated();
+            return getUntranslated() + getFuzzy() + getTranslated();
         }
 
         public int getUntranslated() {
@@ -289,15 +299,15 @@ public class ReportMojo extends AbstractMavenReport {
             return translated;
         }
 
-        public void setTranslated(int translated) {
+        private void setTranslated(int translated) {
             this.translated = translated;
         }
 
-        public void setFuzzy(int fuzzy) {
+        private void setFuzzy(int fuzzy) {
             this.fuzzy = fuzzy;
         }
 
-        public void setUntranslated(int untranslated) {
+        private void setUntranslated(int untranslated) {
             this.untranslated = untranslated;
         }
 

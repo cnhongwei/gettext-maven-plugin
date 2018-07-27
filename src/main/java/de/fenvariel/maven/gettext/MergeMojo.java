@@ -63,14 +63,14 @@ public class MergeMojo extends AbstractGettextMojo {
     protected boolean fuzzy;
 
     /**
-     * Keep the previous msgids of translated messages, marked with ‘#|’, when
+     * Keep the previous msgids of translated messages, marked with '#|', when
      * adding the fuzzy marker to such messages.
      */
     @Parameter(defaultValue = "false")
     protected boolean previous;
 
     /**
-     * Keep the previous msgids of translated messages, marked with ‘#|’, when
+     * Keep the previous msgids of translated messages, marked with '#|', when
      * adding the fuzzy marker to such messages.
      */
     @Parameter(defaultValue = "false")
