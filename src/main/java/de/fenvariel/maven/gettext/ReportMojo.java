@@ -58,6 +58,7 @@ public class ReportMojo extends AbstractMavenReport {
     @Parameter(defaultValue = "msgfmt", required = true)
     protected String msgfmtCmd;
 
+    @Override
     protected void executeReport(Locale locale) throws MavenReportException {
         Sink sink = getSink();
 
@@ -127,6 +128,7 @@ public class ReportMojo extends AbstractMavenReport {
         sink.table_();
     }
 
+    @Override
     public String getDescription(Locale locale) {
         return "Statistics about po files.";
     }
@@ -135,6 +137,7 @@ public class ReportMojo extends AbstractMavenReport {
         return "Gettext";
     }
 
+    @Override
     public String getOutputName() {
         return "gettext-report";
     }
@@ -195,7 +198,11 @@ public class ReportMojo extends AbstractMavenReport {
 
     private class Stats {
 
-        private List<StatsEntry> items = new ArrayList<StatsEntry>();
+        private final List<StatsEntry> items;
+
+        private Stats() {
+            this.items = new ArrayList<StatsEntry>();
+        }
 
         /**
          * <code>
@@ -235,9 +242,10 @@ public class ReportMojo extends AbstractMavenReport {
                 try {
                     return Integer.parseInt(t.nextToken());
                 } catch (NumberFormatException e) {
+                    getLog().error("Could not parse token \"" + token + "\":" + e.getMessage());
                 }
             }
-            getLog().warn("Could not parse token: " + token);
+            getLog().warn("Could not extract number from: " + token);
             return 0;
         }
 
@@ -249,8 +257,8 @@ public class ReportMojo extends AbstractMavenReport {
 
     private class StatsEntry implements Comparable<StatsEntry> {
 
-        private File file;
-        private Locale locale;
+        private final File file;
+        private final Locale locale;
         private int untranslated;
         private int fuzzy;
         private int translated;
@@ -274,7 +282,7 @@ public class ReportMojo extends AbstractMavenReport {
         }
 
         public int getTotal() {
-            return getUntranslated() + getTotal() + getTranslated();
+            return getUntranslated() + getFuzzy() + getTranslated();
         }
 
         public int getUntranslated() {

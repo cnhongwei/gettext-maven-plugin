@@ -65,6 +65,7 @@ public class GettextMojo extends AbstractGettextMojo {
     /**
      * An optional set of source files that should be parsed with xgettext.
      * <pre>
+     * {@code
      * <extraSourceFiles>
      *   <directory>${basedir}</directory>
      *   <includes>
@@ -74,6 +75,7 @@ public class GettextMojo extends AbstractGettextMojo {
      *      <exclude>** /*.txt</exclude>
      *    </excludes>
      * </extraSourceFiles>
+     * }
      * </pre>
      */
     @Parameter
@@ -88,7 +90,7 @@ public class GettextMojo extends AbstractGettextMojo {
     /**
      * Set the copyright holder in the output. string should be the copyright
      * holder of the surrounding package. (Note that the msgstr strings,
-     * extracted from the package’s sources, belong to the copyright holder of
+     * extracted from the package's sources, belong to the copyright holder of
      * the package.) Translators are expected to transfer or disclaim the
      * copyright for their translations, so that package maintainers can
      * distribute them without legal risk. If string is empty, the output files
@@ -98,20 +100,20 @@ public class GettextMojo extends AbstractGettextMojo {
      *
      * The default value for string is the '' so public domain.
      */
-    @Parameter(defaultValue = "${project.organisation.name}")
+    @Parameter(property = "project.organisation.name")
     protected String copyrightHolder;
 
     /**
      * Set the package name in the header of the output.
      */
-    @Parameter(defaultValue = "${project.build.finalName}")
+    @Parameter(property = "project.build.finalName")
     protected String packageName;
 
     /**
      * Set the package version in the header of the output. This option has an
-     * effect only if the ‘packageName’ option is also used.
+     * effect only if the 'packageName' option is also used.
      */
-    @Parameter(defaultValue = "${project.version}")
+    @Parameter(property = "project.version")
     protected String packageVersion;
 
     /**
@@ -133,7 +135,7 @@ public class GettextMojo extends AbstractGettextMojo {
      * translators can contact you.
      *
      * The default value is empty, which means that translators will be
-     * clueless! Don’t forget to specify this option.
+     * clueless! Don't forget to specify this option.
      */
     @Parameter
     protected String msgidBugsAddress;
@@ -176,10 +178,9 @@ public class GettextMojo extends AbstractGettextMojo {
                 cl.createArg().setValue("--msgid-bugs-address=" + msgidBugsAddress);
             } else {
                 String bugAddress = project.getUrl();
-                if (bugAddress == null || bugAddress.trim().isEmpty()) {
-                    if (project.getOrganization() != null) {
-                        bugAddress = project.getOrganization().getUrl();
-                    }
+                if ((bugAddress == null || bugAddress.trim().isEmpty())
+                        && project.getOrganization() != null) {
+                    bugAddress = project.getOrganization().getUrl();
                 }
                 cl.createArg().setValue("--msgid-bugs-address=" + bugAddress);
             }
