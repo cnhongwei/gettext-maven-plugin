@@ -1,21 +1,28 @@
-udo: false
 language: java
+sudo: false
+install: true
+
+addons:
+  sonarcloud:
+    organization: "alexschuetz-github"
+    token:
+      secure: "vZgeC0Ikzs8E9H3uaqr3ysWDVMB+0lBhvxGBxCmXOpNYuHci1R1ZEon1CpLRHab9KmbWui5aCAZ6VLJLvPiUNIJdF0yP9ABmZZ14NaCaB98bFL7xc7PEdVUEP4l3IhPyJKHCZJluoh3YUcVI5bdN4fhG27BwkrlpV6KISspVQBPjwYgsSPQdsUc8g8vPGUHD0mPHT+S8QhoCf3md9IGNUUGlcgMklnAmtFoSz7e8LH6wlY4Q9ULl2lWzHMPl9M4UN65t9QmfzzE+MEFtv3KnOGlXlI0c/PQGkw68jEmzNwiGzFy+dXRlpByJffnNI4TR5TBXsLnoYF91c+QaU4/sqXbb9nlaepIQPIGfqyLyVnWseTjxbrC4qwYKGsH0kCWSq82CxDDey8TPqubk5x9ph3mKyOOVoFmdj6nvXW592bJ9thUsLhJcsvN/rxq+4cwIgyV6Cv8Nv7BnH9CIcppj0VtqO85QGkL1W/eCWsxlKwxKCFglGUFKU8RmK7SMjcw5h416rCEMZNjJpxq6j4KEBEsX8mtufWuET7JwdWMd9WFORQPoRnYmSiXbzh5kgCXZ29w8Y3u/t5b+u5hzAB5J+7nCa1t0fe+FfW1vyr5nzaK+/D5qtMxKSCSdl9SQnrSnvI59qrTNI5wgNcdOYvO8pyxA6B/TDWaF/8Zn4JOcFBc="
+
 jdk:
   - oraclejdk8
-script: mvn --settings .travis/settings.xml clean  verify
+
+script: mvn --settings .travis/settings.xml clean org.jacoco:jacoco-maven-plugin:prepare-agent verify sonar:sonar
+
 cache:
   directories:
-    - $HOME/.m2
-deploy:
-   provider: script
-   script: .travis/release.sh
-   skip_cleanup: true
-   on:
-    repo: example/project
-    tags: true
-    jdk: oraclejdk8
+    - '$HOME/.m2/repository'
+    - '$HOME/.sonar/cache'
 
-# blocklist
-branches:
-  except:
-  - gh-pages
+#deploy:
+#   provider: script
+#   script: .travis/release.sh
+#   skip_cleanup: true
+#   on:
+#    repo: example/project
+#    tags: true
+#    jdk: oraclejdk8
