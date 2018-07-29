@@ -225,15 +225,11 @@ public class ReportMojo extends AbstractMavenReport {
                 entry.setTranslated(extractNumber(matcher.group(1)));
             }
             matcher = patternFuzzy.matcher(line.trim());
-            if (!matcher.find()) {
-                getLog().error("Could not parse statistic output: " + line);
-            } else {
+            if (matcher.find()) {
                 entry.setFuzzy(extractNumber(matcher.group(1)));
             }
             matcher = patternUntranslated.matcher(line.trim());
-            if (!matcher.find()) {
-                getLog().error("Could not parse statistic output: " + line);
-            } else {
+            if (matcher.find()) {
                 entry.setUntranslated(extractNumber(matcher.group(1)));
             }
         }
