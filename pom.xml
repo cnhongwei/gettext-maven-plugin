@@ -1,20 +1,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>de.fenvariel</groupId>
+    <groupId>com.github.cnhongwei</groupId>
     <artifactId>gettext-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>2.0.1-SNAPSHOT</version>
+    <version>2.1.0-SNAPSHOT</version>
     <name>Maven Gettext Plugin</name>
     <description>Generate messages templates and deploy messages bundles</description>
-    <url>https://alexschuetz.github.io/gettext-maven-plugin/</url>
+    <url>https://github.com/cnhongwei/gettext-maven-plugin</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <gitUrl>AlexSchuetz/gettext-maven-plugin</gitUrl>
-        <sonar.organization>alexschuetz</sonar.organization>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <gitUrl>cnhongwei/gettext-maven-plugin</gitUrl>
     </properties>
     <issueManagement>
-        <url>https://github.com/AlexSchuetz/gettext-maven-plugin/issues</url>
+        <url>https://github.com/cnhongwei/gettext-maven-plugin/issues</url>
         <system>GitHub</system>
     </issueManagement>
     <licenses>
@@ -25,6 +23,12 @@
     </licenses>
     <inceptionYear>2005</inceptionYear>
     <developers>
+        <developer>
+            <id>cnhongwei</id>
+            <name>cnhongwei</name>
+            <organization>cnhongwei</organization>
+            <url>http://github.com/cnhongwei/</url>
+        </developer>
         <developer>
             <id>fenvariel</id>
             <name>Alexander Schuetz</name>
