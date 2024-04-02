@@ -121,7 +121,7 @@ public class GettextMojo extends AbstractGettextMojo {
      */
     @Parameter(defaultValue = "FALSE")
     protected Sort sort;
-    
+
     /**
      * Set the reporting address for msgid bugs. This is the email address or
      * URL to which the translators shall report bugs in the untranslated
@@ -141,8 +141,8 @@ public class GettextMojo extends AbstractGettextMojo {
     protected String msgidBugsAddress;
 
     public void execute() throws MojoExecutionException {
-        getLog().info("Invoking xgettext for Java files in '"
-                + sourceDirectory.getAbsolutePath() + "'.");
+        String sourceAbsolutePath = sourceDirectory.getAbsolutePath();
+        getLog().info("Invoking xgettext for Java files in '" + sourceAbsolutePath + "'.");
 
         Commandline cl = new Commandline();
         cl.setExecutable(xgettextCmd);
@@ -178,33 +178,39 @@ public class GettextMojo extends AbstractGettextMojo {
                 cl.createArg().setValue("--msgid-bugs-address=" + msgidBugsAddress);
             } else {
                 String bugAddress = project.getUrl();
-                if ((bugAddress == null || bugAddress.trim().isEmpty())
-                        && project.getOrganization() != null) {
+                if ((bugAddress == null || bugAddress.trim().isEmpty()) && project.getOrganization() != null) {
                     bugAddress = project.getOrganization().getUrl();
                 }
                 cl.createArg().setValue("--msgid-bugs-address=" + bugAddress);
             }
-
         }
-        cl.createArg().setValue("--add-location="+location.name().toLowerCase());
+        cl.createArg().setValue("--add-location=" + location.name().toLowerCase());
 
         if (joinExisting) {
             cl.createArg().setValue("--join-existing");
         }
         cl.createArg().setLine(keywords);
-        cl.setWorkingDirectory(sourceDirectory.getAbsolutePath());
+        cl.setWorkingDirectory(sourceAbsolutePath);
 
         DirectoryScanner ds = new DirectoryScanner();
         ds.setBasedir(sourceDirectory);
-        ds.setIncludes(new String[]{"**/*.java"});
+        ds.setIncludes(new String[] {"**/*.java"});
         ds.scan();
         String[] files = ds.getIncludedFiles();
         List<String> fileNameList = Collections.emptyList();
         if (extraSourceFiles != null && extraSourceFiles.getDirectory() != null) {
             try {
-                fileNameList = FileUtils.getFileNames(new File(extraSourceFiles.getDirectory()),
+                File extraDirectory = new File(extraSourceFiles.getDirectory());
+                String extraAbsolutePath = extraDirectory.getAbsolutePath();
+                if (!extraAbsolutePath.equals(sourceAbsolutePath)) {
+                    cl.createArg().setValue("--directory=" + sourceAbsolutePath);
+                    cl.createArg().setValue("--directory=" + extraAbsolutePath);
+                }
+                fileNameList = FileUtils.getFileNames(
+                        extraDirectory,
                         StringUtils.join(extraSourceFiles.getIncludes().iterator(), ","),
-                        StringUtils.join(extraSourceFiles.getExcludes().iterator(), ","), false);
+                        StringUtils.join(extraSourceFiles.getExcludes().iterator(), ","),
+                        false);
             } catch (IOException e) {
                 throw new MojoExecutionException("error finding extra source files", e);
             }
@@ -265,5 +271,4 @@ public class GettextMojo extends AbstractGettextMojo {
         }
         return path;
     }
-
 }
