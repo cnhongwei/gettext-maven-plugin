@@ -90,6 +90,7 @@ public class ReportMojo extends AbstractMavenReport {
 
         sink.table();
         sink.tableCaption();
+        sink.tableCaption_();
         sink.tableRow();
         sink.tableHeaderCell();
         sink.text("Locale");
@@ -189,7 +190,7 @@ public class ReportMojo extends AbstractMavenReport {
 
     public static Locale getLocale(File file) {
         String basename = file.getName().substring(0, file.getName().lastIndexOf('.'));
-        return Locale.forLanguageTag(basename);
+        return Locale.forLanguageTag(basename.replace('_', '-'));
     }
 
     private static Pattern patternTranslated = Pattern.compile("(\\d+) translated message[s]?");

@@ -16,7 +16,10 @@ package de.fenvariel.maven.gettext;
  * limitations under the License.
  */
 import java.io.File;
+import java.util.Locale;
 
+import org.apache.maven.doxia.siterenderer.RenderingContext;
+import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -59,6 +62,26 @@ public class ReportMojoTest {
             }
         }
 
+    }
+
+    @Test
+    public void testGeneratedReportContainsStatisticsTable() throws Exception {
+        SiteRendererSink sink = new SiteRendererSink(
+                new RenderingContext(new File("target"), "gettext-report.html"));
+
+        reportMojo.generate(sink, Locale.ENGLISH);
+
+        String report = sink.getBody();
+        Assert.assertTrue(report.contains("<table"));
+        Assert.assertTrue(report.contains("<th>Locale</th>"));
+        Assert.assertTrue(report.contains("<td>German</td>"));
+    }
+
+    @Test
+    public void testGetLocaleAcceptsUnderscoreSeparatedFileNames() {
+        Locale locale = ReportMojo.getLocale(new File("zh_CN.po"));
+
+        Assert.assertEquals("zh-CN", locale.toLanguageTag());
     }
 
     private void assert_de(ReportMojo.StatsEntry e) {
