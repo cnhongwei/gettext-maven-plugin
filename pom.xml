@@ -123,6 +123,17 @@
             <artifactId>maven-reporting-impl</artifactId>
             <version>3.0.0</version>
         </dependency>
+        <!--
+            maven-reporting-api:3.0 transitively brings doxia-sink-api:1.0,
+            while maven-reporting-impl:3.0.0 requires the 1.7 API.  Declare
+            the compatible version directly so Maven's dependency mediation
+            cannot select the older, incomplete API for the plugin realm.
+        -->
+        <dependency>
+            <groupId>org.apache.maven.doxia</groupId>
+            <artifactId>doxia-sink-api</artifactId>
+            <version>1.7</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
