@@ -82,13 +82,14 @@ final class TranslationStats {
         command.addEnvironment("LC_ALL", "C");
         command.setExecutable(msgfmtCmd);
         command.createArg().setValue("--statistics");
+        command.createArg().setValue("-o");
+        command.createArg().setValue("-");
         command.createArg().setValue(file.getAbsolutePath());
 
-        Writer out = new StringWriter();
         Writer err = new StringWriter();
         try {
             int result = CommandLineUtils.executeCommandLine(command,
-                    new WriterStreamConsumer(out), new WriterStreamConsumer(err));
+                    new DiscardingStreamConsumer(), new WriterStreamConsumer(err));
             if (result != 0) {
                 log.warn("Could not collect statistics for " + file.getAbsolutePath() + ": " + err);
                 return null;

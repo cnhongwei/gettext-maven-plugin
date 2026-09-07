@@ -176,13 +176,14 @@ public class ReportMojo extends AbstractMavenReport {
             cl.addEnvironment("LC_ALL", "C");
             cl.setExecutable(msgfmtCmd);
             cl.createArg().setValue("--statistics");
+            cl.createArg().setValue("-o");
+            cl.createArg().setValue("-");
             cl.createArg().setValue(file.getAbsolutePath());
 
-            Writer out = new StringWriter();
             Writer err = new StringWriter();
             try {
                 int ret = CommandLineUtils.executeCommandLine(cl,
-                        new WriterStreamConsumer(out),
+                        new DiscardingStreamConsumer(),
                         new WriterStreamConsumer(err));
                 if (ret == 0) {
                     // for whatever reason the output is written to stderr
