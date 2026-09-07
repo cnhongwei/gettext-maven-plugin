@@ -53,6 +53,10 @@ public abstract class AbstractGettextMojo extends AbstractMojo {
     @Parameter(defaultValue = "keys.pot", required = true)
     protected String keysFile;
 
+    /** The locale of the source messages. */
+    @Parameter(defaultValue = "en", required = true)
+    protected String sourceLocale;
+
     /**
      * Optional raw command line arguments
      */
@@ -71,5 +75,10 @@ public abstract class AbstractGettextMojo extends AbstractMojo {
                 cl.createArg().setValue(argument);
             }
         }
+    }
+
+    protected void printTranslationStats(String msgfmtCmd) {
+        TranslationStats.print(TranslationStats.gather(
+                poDirectory, keysFile, msgfmtCmd, sourceLocale, getLog()), getLog());
     }
 }

@@ -233,6 +233,7 @@ public class GettextMojo extends AbstractGettextMojo {
         } catch (CommandLineException e) {
             throw new MojoExecutionException("Could not execute " + xgettextCmd + ".", e);
         }
+        printTranslationStats("msgfmt");
     }
 
     private File createListFile(String[] files, List<String> fileList) {

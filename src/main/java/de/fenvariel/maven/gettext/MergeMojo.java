@@ -118,5 +118,6 @@ public class MergeMojo extends AbstractGettextMojo {
                 getLog().error("Could not execute " + msgmergeCmd + ".", e);
             }
         }
+        printTranslationStats("msgfmt");
     }
 }

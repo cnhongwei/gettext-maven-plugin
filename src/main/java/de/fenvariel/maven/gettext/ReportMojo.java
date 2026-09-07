@@ -54,6 +54,14 @@ public class ReportMojo extends AbstractMavenReport {
     @Parameter(defaultValue = "src/main/po", required = true)
     protected File poDirectory;
 
+    /** Filename of the source catalog. */
+    @Parameter(defaultValue = "keys.pot", required = true)
+    protected String keysFile = "keys.pot";
+
+    /** The locale of the source messages. */
+    @Parameter(defaultValue = "en", required = true)
+    protected String sourceLocale = "en";
+
     /**
      * msgfmt command.
      */
@@ -74,6 +82,8 @@ public class ReportMojo extends AbstractMavenReport {
 
         Stats stats = gatherStats();
         createReport(sink, stats);
+        TranslationStats.print(TranslationStats.gather(
+                poDirectory, keysFile, msgfmtCmd, sourceLocale, getLog()), getLog());
 
         sink.body_();
 

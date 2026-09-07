@@ -69,12 +69,6 @@ public class DistMojo extends AbstractGettextMojo {
     protected String javaVersion;
 
     /**
-     * The locale of the messages in the source code.
-     */
-    @Parameter(defaultValue = "en", required = true)
-    protected String sourceLocale;
-
-    /**
      * Outputs the result as .java files and not classes if set to true.
      */
     @Parameter(defaultValue = "false")
@@ -131,6 +125,7 @@ public class DistMojo extends AbstractGettextMojo {
         getLog().info("Creating default resource bundle");
         touch(new File(outputDirectory, basepath + ".properties"));
         project.addCompileSourceRoot(outputDirectory.getAbsolutePath());
+        printTranslationStats(msgfmtCmd);
     }
 
     private boolean isNewer(File inputFile, File outputFile) {
