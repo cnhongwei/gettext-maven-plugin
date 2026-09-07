@@ -41,9 +41,10 @@ final class TranslationStats {
         if (sourceLocale == null || sourceLocale.trim().isEmpty()) {
             sourceLocale = "en";
         }
+        String normalizedSourceLocale = normalizeLocale(sourceLocale);
         File sourceFile = new File(poDirectory, keysFile);
         if (sourceFile.isFile()) {
-            Entry source = read(sourceFile, sourceLocale, true, msgfmtCmd, log);
+            Entry source = read(sourceFile, normalizedSourceLocale, true, msgfmtCmd, log);
             if (source != null) {
                 entries.add(source);
             }
@@ -56,7 +57,11 @@ final class TranslationStats {
         scanner.setIncludes(new String[] {"**/*.po"});
         scanner.scan();
         for (String path : scanner.getIncludedFiles()) {
-            Entry entry = read(new File(poDirectory, path), locale(path), false, msgfmtCmd, log);
+            String language = locale(path);
+            if (normalizedSourceLocale.equals(language)) {
+                continue;
+            }
+            Entry entry = read(new File(poDirectory, path), language, false, msgfmtCmd, log);
             if (entry != null) {
                 entries.add(entry);
             }
@@ -116,7 +121,13 @@ final class TranslationStats {
 
     private static String locale(String path) {
         String name = new File(path).getName();
-        return name.substring(0, name.lastIndexOf('.')).replace('_', '-');
+        return normalizeLocale(name.substring(0, name.lastIndexOf('.')));
+    }
+
+    private static String normalizeLocale(String value) {
+        Locale locale = Locale.forLanguageTag(value.replace('_', '-'));
+        String languageTag = locale.toLanguageTag();
+        return languageTag.isEmpty() ? value.replace('_', '-') : languageTag;
     }
 
     static void print(List<Entry> entries, Log log) {
